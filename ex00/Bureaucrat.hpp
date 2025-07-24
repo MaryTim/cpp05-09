@@ -12,7 +12,7 @@ public:
     Bureaucrat& operator=(const Bureaucrat& other);
     ~Bureaucrat();
 
-    const std::string getName();
+    const std::string& getName();
     int getGrade();
 
     void incrementGrade();
@@ -20,17 +20,19 @@ public:
 
     class GradeTooHigh : public std::exception {
         public:
-            const char* what() const noexcept override;
+            const char* what() const throw();
     };
 
     class GradeTooLow : public std::exception {
         public:
-            const char* what() const noexcept override;
+            const char* what() const throw();
     };
 
 private:
     const std::string name_;
     int grade_;
 };
+
+std::ostream& operator<<(std::ostream& os, Bureaucrat& b);
 
 #endif
