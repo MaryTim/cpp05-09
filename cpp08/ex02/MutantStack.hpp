@@ -4,18 +4,18 @@
 #include <stack>
 #include <deque>
 
-template<typename T, typename Container = std::deque<T> >
-class MutantStack : public std::stack<T, Container> {
+template<typename T>
+class MutantStack : public std::stack<T> {
     public:
-        typedef typename Container::iterator iterator;
-        typedef typename Container::const_iterator const_iterator;
-        typedef typename Container::reverse_iterator reverse_iterator;
-        typedef typename Container::const_reverse_iterator const_reverse_iterator;
+        typedef typename std::deque<T>::iterator iterator;
+        typedef typename std::deque<T>::const_iterator const_iterator;
+        typedef typename std::deque<T>::reverse_iterator reverse_iterator;
+        typedef typename std::deque<T>::const_reverse_iterator const_reverse_iterator;
 
-        MutantStack() : std::stack<T, Container>() {}
-        MutantStack(const MutantStack& other) : std::stack<T, Container>(other) {}
+        MutantStack() : std::stack<T>() {}
+        MutantStack(const MutantStack& other) : std::stack<T>(other) {}
         MutantStack& operator=(const MutantStack& other) {
-            std::stack<T, Container>::operator=(other);
+            std::stack<T>::operator=(other);
             return *this;
         }
         ~MutantStack() {}

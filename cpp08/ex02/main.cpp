@@ -19,11 +19,9 @@ std::cout << "---- MutantStack test ----" << std::endl;
         mstack.push(0);
         MutantStack<int>::iterator it = mstack.begin();
         MutantStack<int>::iterator ite = mstack.end();
-        ++it;
-        --it;
         while (it != ite) {
             std::cout << *it << std::endl;
-            ++it;
+            it++;
         }
         std::stack<int> s(mstack);
     }
@@ -41,11 +39,9 @@ std::cout << "---- MutantStack test ----" << std::endl;
         lst.push_back(0);
         std::list<int>::iterator it = lst.begin();
         std::list<int>::iterator ite = lst.end();
-        ++it;
-        --it;
         while (it != ite) {
             std::cout << *it << std::endl;
-            ++it;
+            it++;
         }
     }
     return 0;

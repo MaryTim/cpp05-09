@@ -11,8 +11,7 @@ Span::Span(unsigned int quantity) : quantity_(quantity) {
     std::cout << "Constructor for a span with the quantity " << quantity_ << " has been called \n";
 }
 
-Span::Span(const Span& other) : quantity_(other.quantity_) {
-    *this = other;
+Span::Span(const Span& other) : quantity_(other.quantity_), numbers_(other.numbers_) {
     std::cout << "Copy constructor for a span with the quantity " << quantity_ << " has been called \n";
 }
 

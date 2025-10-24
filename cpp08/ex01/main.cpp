@@ -11,8 +11,8 @@ int main() {
         sp.addNumber(9);
         sp.addNumber(11);
 
-        std::cout << sp.shortestSpan() << std::endl; // Output: 2
-        std::cout << sp.longestSpan() << std::endl;  // Output: 14
+        std::cout << sp.shortestSpan() << std::endl; // 2
+        std::cout << sp.longestSpan() << std::endl;  // 14
     } catch (const std::exception& e) {
         std::cerr << "Error: " << e.what() << "\n";
     }
@@ -20,7 +20,9 @@ int main() {
     try {
         Span big(10000);
         std::vector<int> values(10000);
-        for (int i = 0; i < 10000; ++i) values[i] = rand();
+        for (int i = 0; i < 10000; i++) {
+            values[i] = rand();
+        }
         big.addRange(values.begin(), values.end());
         std::cout << "Big span OK" << std::endl;
     } catch (const std::exception& e) {
