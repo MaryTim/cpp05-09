@@ -1,11 +1,11 @@
-#ifndef BITCOINEXCHAGE_HPP
+#ifndef BITCOINEXCHANGE_HPP
 # define BITCOINEXCHANGE_HPP
 
-#include <iostream>
-#include <map>
-#include <cstdlib>
-#include <cctype>
-#include <fstream>
+# include <iostream>
+# include <map>
+# include <cstdlib>
+# include <cctype>
+# include <fstream>
 
 class BitcoinExchange {
     public:
@@ -14,8 +14,8 @@ class BitcoinExchange {
         BitcoinExchange& operator=(const BitcoinExchange& other);
         ~BitcoinExchange();
 
-        bool loadDB(std::string &filename);
-        void proccessFile(std::string &filename);
+        bool loadDB(const std::string &filename);
+        void proccessFile(const std::string &filename);
 
     private:
         std::map<std::string, double> rates_;

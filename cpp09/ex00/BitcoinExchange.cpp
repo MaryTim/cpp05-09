@@ -25,13 +25,13 @@ int BitcoinExchange::daysInMonth(int y, int m) {
 bool BitcoinExchange::isDigitStr(std::string &s) {
     if (s.empty())
         return false;
-    for (int i = 0; i < s.size(); i++)
+    for (std::string::size_type i = 0; i < s.size(); i++)
         if (!std::isdigit(s[i]))
             return false;
     return true;
 }
 
-bool BitcoinExchange::parseDate(std::string& s, int& Y, int& M, int& D) {
+bool BitcoinExchange::parseDate(std::string& s, int& y, int& m, int& d) {
     if (s.size() != 10 || s[4] != '-' || s[7] != '-')
         return false;
     std::string year = s.substr(0,4);
@@ -39,13 +39,13 @@ bool BitcoinExchange::parseDate(std::string& s, int& Y, int& M, int& D) {
     std::string day = s.substr(8,2);
     if (!isDigitStr(year) || !isDigitStr(month) || !isDigitStr(day))
         return false;
-    Y = std::atoi(year.c_str());
-    M = std::atoi(month.c_str());
-    D = std::atoi(day.c_str());
-    if (M < 1 || M > 12)
+    y = std::atoi(year.c_str());
+    m = std::atoi(month.c_str());
+    d = std::atoi(day.c_str());
+    if (m < 1 || m > 12)
         return false;
-    int dim = daysInMonth(Y, M);
-    if (D < 1 || D > dim)
+    int dim = daysInMonth(y, m);
+    if (d < 1 || d > dim)
         return false;
     return true;
 }
@@ -70,26 +70,42 @@ bool BitcoinExchange::split(std::string &line, char sep, std::string &left, std:
 }
 
 bool BitcoinExchange::parsePositiveVal(std::string& s, double& out) {
-    char* endptr = 0;
+    char* endptr = 0; //receicve address of first unparsed char
     out = std::strtod(s.c_str(), &endptr);
-    if (endptr == s.c_str())
+    if (endptr == s.c_str()) //if string can´t be convertred to double, endptr is set to s
         return false;
-    while (*endptr) {
-        if (!std::isspace(static_cast<unsigned char>(*endptr))) return false;
-        endptr++;
-    }
     if (out < 0.0) {
         std::cerr << "Error: not a positive number." << std::endl;
         return false;
     }
     if (out > 1000.0) {
-        std::cerr << "Error: too large a number." << std::endl;
+        std::cerr << "Error: number is too big" << std::endl;
         return false;
     }
     return true;
 }
 
-void BitcoinExchange::proccessFile(std::string &filename) {
+bool BitcoinExchange::findRate(std::string& date, double& rateOut) {
+    std::map<std::string,double>::iterator it = rates_.lower_bound(date);
+    if (it == rates_.end()) { // all keys in map are less than date
+        if (rates_.empty())
+            return false;
+        it--;
+        rateOut = it->second;
+        return true;
+    }
+    if (it->first == date) {
+        rateOut = it->second;
+        return true;
+    }
+    if (it == rates_.begin())
+        return false;
+    it--;
+    rateOut = it->second;
+    return true;
+}
+
+void BitcoinExchange::proccessFile(const std::string &filename) {
     std::ifstream fin(filename.c_str());
     if (!fin.good()) {
         std::cerr << "Error: could not open file." << std::endl;
@@ -109,10 +125,10 @@ void BitcoinExchange::proccessFile(std::string &filename) {
         }
         std::string date = trim(left);
         std::string value = trim(right);
-        int Y;
-        int M;
-        int D;
-        if (!parseDate(date, Y, M, D)) {
+        int year;
+        int month;
+        int day;
+        if (!parseDate(date, year, month, day)) {
             std::cerr << "Bad date parsing => " << trim(line) << std::endl;
             continue;
         }
@@ -127,4 +143,36 @@ void BitcoinExchange::proccessFile(std::string &filename) {
         double result = amount * rate;
         std::cout << date << " => " << amount << " = " << result << std::endl;
     }
+}
+
+bool BitcoinExchange::loadDB(const std::string& filename) {
+    std::ifstream fin(filename.c_str());
+    if (!fin.good())
+        return false;
+
+    std::string line;
+    //std::getline(fin, line);
+
+    while (std::getline(fin, line)) {
+        if (line.empty())
+            continue;
+        std::string date;
+        std::string price;
+
+        if (!split(line, ',', date, price))
+            continue;
+        date = trim(date);
+        price = trim(price);
+        int y;
+        int m;
+        int d;
+        if (!parseDate(date, y, m, d))
+            continue;
+        char* e = 0;
+        double rate = std::strtod(price.c_str(), &e);
+        if (e == price.c_str())
+            continue;
+        rates_[date] = rate;
+    }
+    return !rates_.empty();
 }
