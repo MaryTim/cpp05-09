@@ -10,6 +10,8 @@ class PmergeMe {
         static void sortVector(std::vector<unsigned int> &v);
         static void sortDeque(std::deque<unsigned int> &d);
 
+        static void now(struct timeval &tv);
+        static double elapsedUS(const struct timeval &a, const struct timeval &b);
     private:
         PmergeMe();
         PmergeMe(const PmergeMe &other);

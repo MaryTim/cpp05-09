@@ -1,5 +1,6 @@
 #include "Pmerge.hpp"
 #include <climits>
+#include <sys/time.h>
 
 static bool isPositiveInt(const std::string &str, unsigned int &out) {
     if (str.empty())
@@ -25,7 +26,13 @@ static bool isPositiveInt(const std::string &str, unsigned int &out) {
         return false;
     out = static_cast<unsigned int>(result);
     return true;
-    
+}
+
+static void printOutContainer(const std::vector<unsigned int> &v) {
+    for (std::size_t i = 0; i < v.size(); i++) {
+        std::cout << v[i] << ' ';
+    }
+    std::cout << "\n";
 }
 
 int main(int argc, char **argv) {
@@ -43,4 +50,24 @@ int main(int argc, char **argv) {
         }
         input.push_back(element);
     }
+
+    std::vector<unsigned int> v = input;
+    std::deque<unsigned int> d(input.begin(), input.end());
+
+    std::cout << "Before: ";
+    printOutContainer(input);
+
+    timeval start;
+    timeval end;
+
+    PmergeMe::now(start);
+    PmergeMe::sortVector(v);
+    PmergeMe::now(end);
+    double usVector = PmergeMe::elapsedUS(start, end);
+
+    PmergeMe::now(start);
+    PmergeMe::sortDeque(d);
+    PmergeMe::now(end);
+    double usDeque = PmergeMe::elapsedUS(start, end);
+
 }
