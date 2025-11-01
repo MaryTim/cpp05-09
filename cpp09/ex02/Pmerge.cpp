@@ -22,6 +22,26 @@ void PmergeMe::sortDeque(std::deque<unsigned int>& d) {
 
 // vector
 
+void PmergeMe::v_mergeInsert(std::vector<unsigned int> &data) {
+    if (data.size() <= 1)
+        return;
+    std::vector<VectorPair> pairs;
+    bool hasTail = false;
+    unsigned int tail = 0;
+    v_getPairs(data, pairs, hasTail, tail);
+
+    if (!pairs.empty()) {
+        v_sortWinners(pairs);
+
+        std::vector<unsigned int> chain;
+        v_makeChain(pairs, hasTail, tail, chain);
+        v_insertLosers(chain, pairs);
+        data.swap(chain);
+    } else {
+        //only a tail, already size 1
+    }
+}
+
 // 1. make pairs from initial vector
 void PmergeMe::v_getPairs(const std::vector<unsigned int> &input, 
                                 std::vector<VectorPair> &pairs, 
@@ -55,13 +75,27 @@ void PmergeMe::v_getPairs(const std::vector<unsigned int> &input,
 
 // 2. sort winners
 void PmergeMe::v_sortWinners(std::vector<VectorPair> &pairs) {
-
+    std::vector<unsigned int> winners;
+    for(size_t i = 0; i < pairs.size(); i++) {
+        winners.push_back(pairs[i].winner);
+    }
+    v_mergeInsert(winners);
+    std::vector<VectorPair> res;
+    for (size_t i = 0; i < winners.size(); i++) {
+        unsigned int winner = winners[i];
+        for (size_t j = 0; j < pairs.size(); j++) {
+            if (pairs[j].winner == winner) {
+                res.push_back(pairs[j]);
+                pairs[j].winner = UINT_MAX;
+                break;
+            }
+        }
+    }
+    pairs.swap(res);
 }
 
 
-void PmergeMe::v_mergeInsert(std::vector<unsigned int> &data) {
 
-}
 
 
 void PmergeMe::v_makeChain(const std::vector<VectorPair> &pairs,
