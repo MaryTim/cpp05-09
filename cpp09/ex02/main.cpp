@@ -1,6 +1,6 @@
 #include "Pmerge.hpp"
 #include <climits>
-#include <sys/time.h>
+
 
 static bool isPositiveInt(const std::string &str, unsigned int &out) {
     if (str.empty())
@@ -41,6 +41,7 @@ int main(int argc, char **argv) {
         return 1;
     }
 
+    // validate all passed arguments are positive
     std::vector<unsigned int> input;
     for (int i = 1; i < argc; i++) {
         unsigned int element;
@@ -63,11 +64,22 @@ int main(int argc, char **argv) {
     PmergeMe::now(start);
     PmergeMe::sortVector(v);
     PmergeMe::now(end);
-    double usVector = PmergeMe::elapsedUS(start, end);
+    double usVector = PmergeMe::timeDiff(start, end);
 
     PmergeMe::now(start);
     PmergeMe::sortDeque(d);
     PmergeMe::now(end);
-    double usDeque = PmergeMe::elapsedUS(start, end);
+    double usDeque = PmergeMe::timeDiff(start, end);
 
+    std::cout << "After: ";
+    printOutContainer(v);
+
+    std::cout.setf(std::ios::fixed); //fix float number
+    std::cout.precision(6);
+    
+    std::cout << "Time to process a range of " << input.size()
+              << " elements with std::vector : " << usVector << " us\n";
+    std::cout << "Time to process a range of " << input.size()
+              << " elements with std::deque  : " << usDeque << " us\n";
+    return 0;
 }
