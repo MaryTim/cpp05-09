@@ -151,7 +151,6 @@ bool BitcoinExchange::loadDB(const std::string& filename) {
         return false;
 
     std::string line;
-    //std::getline(fin, line);
 
     while (std::getline(fin, line)) {
         if (line.empty())
